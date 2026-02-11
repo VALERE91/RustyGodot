@@ -371,6 +371,9 @@ fn package_game(root: &Path) -> Result<()> {
 
     let status = Command::new(godot_abs)
         .arg("--headless")
+        .arg("--verbose")
+        .arg("--audio-driver").arg("Dummy")
+        .arg("--display-driver").arg("headless")
         .arg("--export-release")
         .arg(platform_name)
         .arg(output_abs)

@@ -64,7 +64,7 @@ fn main() -> Result<()> {
 
 fn get_os_info() -> (&'static str, &'static str) {
     if cfg!(target_os = "windows") {
-        ("win64.exe.zip", "Godot_v4/Godot_v4.6-stable_win64.exe")
+        ("win64.exe.zip", "Godot_v4.6-stable_win64.exe")
     } else if cfg!(target_os = "macos") {
         ("macos.universal.zip", "Godot.app/Contents/MacOS/Godot")
     } else {

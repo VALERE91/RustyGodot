@@ -369,9 +369,23 @@ fn package_game(root: &Path) -> Result<()> {
     let game_abs = game_dir.canonicalize()?;
     let output_abs = output_path; // Don't canonicalize yet, might not exist
 
-    let status = Command::new(godot_abs)
+    println!("Step 1/2: Importing assets for {}...", platform_name);
+    let status_import = Command::new(&godot_abs)
         .arg("--headless")
-        .arg("--verbose")
+        .arg("--editor")
+        .arg("--quit") // Quit immediately after import
+        .arg("--audio-driver").arg("Dummy")
+        .arg("--display-driver").arg("headless")
+        .current_dir(&game_abs)
+        .status()?;
+
+    if !status_import.success() {
+        anyhow::bail!("Godot Import step failed.");
+    }
+
+    println!("Step 2/2: Exporting project for {}...", platform_name);
+    let status_export = Command::new(&godot_abs)
+        .arg("--headless")
         .arg("--audio-driver").arg("Dummy")
         .arg("--display-driver").arg("headless")
         .arg("--export-release")
@@ -380,10 +394,10 @@ fn package_game(root: &Path) -> Result<()> {
         .current_dir(&game_abs)
         .status()?;
 
-    if status.success() {
+    if status_export.success() {
         println!("Export complete! Find it at: builds/{}/", platform_name);
     } else {
-        anyhow::bail!("Godot export failed.");
+        anyhow::bail!("Godot Export step failed.");
     }
 
     Ok(())
